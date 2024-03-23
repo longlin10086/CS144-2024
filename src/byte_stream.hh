@@ -1,8 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 #include <string>
 #include <string_view>
+#include <sys/types.h>
 
 class Reader;
 class Writer;
@@ -24,7 +26,11 @@ public:
 protected:
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
   uint64_t capacity_;
+  uint64_t pushed_byte_count_ = 0;
+  uint64_t poped_byte_count_ = 0;
   bool error_ {};
+  bool is_closed_ {};
+  std::string cache_ {};
 };
 
 class Writer : public ByteStream
