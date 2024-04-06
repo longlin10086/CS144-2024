@@ -20,7 +20,9 @@ void Writer::push( string data )
   }
 
   uint64_t push_length = min(data.length(), available_capacity());
-  data = data.substr(0, push_length);
+  if (push_length < data.size()) {
+      data = data.substr(0, push_length);
+  }
   cache_.push(move(data));
   cache_view_.emplace(cache_.back().c_str(), push_length);
   buffered_byte_count_ += push_length;
@@ -77,32 +79,28 @@ void Reader::pop( uint64_t len )
   }
 
   uint64_t poped_length = min(len, bytes_buffered());
-  uint64_t front_length = cache_view_.front().size();
-  if (poped_length < front_length) {
-    cache_view_.front().remove_prefix(poped_length);
-  } else {
-    uint64_t pop = poped_length;
-    while (pop >= front_length and !cache_view_.empty()) {
-      pop -= front_length;
-      cache_view_.pop();
-      front_length = cache_view_.front().size();
-    }
-    cache_view_.front().remove_prefix(pop);
-  }
-
-  // uint64_t poped_length = min(len, bytes_buffered());
-  // uint64_t pop = poped_length;
-  // uint64_t front_length {};
-  // while (pop > 0 and !cache_view_.empty()) {
-  //   front_length = cache_view_.front().size();
-  //   if (pop < front_length) {
-  //     cache_view_.front().remove_prefix(pop);
-  //     break;
-  //   } else {
+  // uint64_t front_length = cache_view_.front().size();
+  // if (poped_length < front_length) {
+  //   cache_view_.front().remove_prefix(poped_length);
+  // } else {
+  //   uint64_t pop = poped_length;
+  //   while (pop >= front_length and !cache_view_.empty()) {
   //     pop -= front_length;
   //     cache_view_.pop();
+  //     front_length = cache_view_.front().size();
   //   }
+  //   cache_view_.front().remove_prefix(pop);
   // }
+
+
+  uint64_t pop = poped_length;
+  uint64_t front_length = cache_view_.front().size();
+  while (pop >= front_length and !cache_view_.empty()) {
+    pop -= front_length;
+    cache_view_.pop();
+    front_length = cache_view_.front().size();
+  }
+  cache_view_.front().remove_prefix(pop);
 
   buffered_byte_count_ -= poped_length;
   poped_byte_count_ += poped_length;
