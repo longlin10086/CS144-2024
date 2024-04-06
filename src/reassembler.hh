@@ -1,6 +1,10 @@
 #pragma once
 
 #include "byte_stream.hh"
+#include <cstdint>
+#include <map>
+#include <vector>
+
 
 class Reassembler
 {
@@ -41,5 +45,16 @@ public:
   const Writer& writer() const { return output_.writer(); }
 
 private:
+  uint64_t first_unassembled_index_ = 0;
+  uint64_t first_unacceptable_index_ = 0;
+  uint64_t pending_ = 0;
+
+  bool has_last_substring = false;
+
+  std::vector<std::pair<uint64_t, std::string>> container_ {};
+  // std::set<uint64_t> indexs_ {};
   ByteStream output_; // the Reassembler writes to this ByteStream
+
+  void insert_from_container(uint64_t first_unassembled_index);
+  static bool compare_maps(const std::pair<uint64_t, std::string>& pair1, const std::pair<uint64_t, std::string>& pair2) { return pair1.first < pair2.first; }
 };

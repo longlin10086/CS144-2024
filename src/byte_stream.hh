@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
+#include <queue>
 #include <string>
 #include <string_view>
 #include <sys/types.h>
@@ -25,12 +25,15 @@ public:
 
 protected:
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
-  uint64_t capacity_;
+  uint64_t capacity_ {};
+  uint64_t buffered_byte_count_ = 0;
   uint64_t pushed_byte_count_ = 0;
   uint64_t poped_byte_count_ = 0;
   bool error_ {};
   bool is_closed_ {};
-  std::string cache_ {};
+  std::queue<std::string> cache_ {};
+  std::queue<std::string_view> cache_view_ {};
+  std::string_view front_ {};
 };
 
 class Writer : public ByteStream
