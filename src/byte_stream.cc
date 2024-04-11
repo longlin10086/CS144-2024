@@ -95,10 +95,14 @@ void Reader::pop( uint64_t len )
 
   uint64_t pop = poped_length;
   uint64_t front_length = cache_view_.front().size();
-  while (pop >= front_length and !cache_view_.empty()) {
+  while (pop >= front_length) {
     pop -= front_length;
     cache_view_.pop();
-    front_length = cache_view_.front().size();
+    if (!cache_view_.empty()) {
+      front_length = cache_view_.front().size();
+    } else {
+      break;
+    }
   }
   cache_view_.front().remove_prefix(pop);
 

@@ -51,7 +51,7 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
     head_it --;
   }
   auto current_map = head_it;
-  for (; current_map != tail_it; ) {
+  while (current_map != tail_it) {
     if (current_map == container_.end()) {
       break;
     }
