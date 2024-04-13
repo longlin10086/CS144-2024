@@ -9,11 +9,15 @@ using namespace std;
 void Reassembler::insert( uint64_t first_index, string data, bool is_last_substring )
 {
   // Your code here.
+
+  if (!writer().available_capacity()) {
+    return;
+  }
+
   if (data.empty()) {
     if (is_last_substring) output_.writer().close();
     return;
   }
-
 
   uint64_t next_index = first_index + data.length();
   first_unacceptable_index_ = first_unassembled_index_ + output_.writer().available_capacity();
